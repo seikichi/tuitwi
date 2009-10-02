@@ -17,8 +17,8 @@ TUIのtwitterクライアントです
 Ubuntu 9.04にて動作確認しています
 
 python2.5以上
-python-twitter (http://code.google.com/p/python-twitter/) と
-pyyaml(http://pyyaml.org/) を使用しています
+python-twitter ( http://code.google.com/p/python-twitter/ ) と
+pyyaml ( http://pyyaml.org/ ) を使用しています
 
 python-twitterのバージョンは 0.6-devel 以上
 debianのaptで入るものだとバージョンが低かったりするので注意
