@@ -1,0 +1,59 @@
+# このファイルはYAMLの形式です
+# 注:1 保存する場合文字コードはUTF-8で
+# 注:2 インデントが大きな意味を持ちます。気をつけて下さい
+
+# アカウント名とパスワードを記入
+credential:
+  user: 'hogefuga'
+  password: 'password'
+
+# オプション
+options:
+  # UnicodeのAmbiduous Widthの幅をいくつにするか(1or2)
+  # 表示が崩れる時はこの値を変えてみて下さい
+  ambiguous_width: 2
+
+  # 発言ウィンドウの幅
+  full_status_area_height: 6
+
+  # 1タブにつきどれだけ履歴を保存するか
+  max_log: 200
+  # 更新間隔
+  update_interval: 60
+  # ブラウザ設定
+  # 'screen w3m %s' とすればスクリーンの中で別タブを開いて表示
+  browser_command: 'firefox %s'
+
+  # APIを使ってreplyを確認する間隔(デフォルトだと20回更新に一回)
+  reply_check_interval: 20
+
+
+# タブ設定
+
+# 例
+# # タブの名前
+# - title: 'title'
+#   # 振り分けるユーザー名のリスト
+#   # 空なら全ての発言を取ります
+#   users:
+#     - friends01
+#     - friends02
+#     - friends03
+#     - friends04
+#        ...
+#   keyword: 'ここに正規表現'
+
+# 以下実例
+
+tabs:
+  # 全ての発言を取得する
+  - title: 'all'
+    users: []
+    keyword: ''
+
+  # せいきち宛のみ
+  # - title 'seikichi'
+  #   users: []
+  #   keyword: '(seikichi|せいきち|se-kici|せーきち)'
+
+
