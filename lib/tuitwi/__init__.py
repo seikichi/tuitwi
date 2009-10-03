@@ -11,8 +11,6 @@ import stat
 import yaml
 import locale
 import unicodedata
-#import types
-#import twitter
 import threading
 import widechartools
 import Queue
@@ -40,7 +38,6 @@ class TuiTwi(object):
             curses.echo()
             curses.endwin()
             print message
-#        self.end = True
         self.event.set()
         self.updater.join()
         self.twitter_communicator.join()
@@ -58,18 +55,12 @@ class TuiTwi(object):
             curses.init_pair(6, curses.COLOR_WHITE, -1)
             curses.init_pair(7, curses.COLOR_YELLOW, -1)
 
-        # self.updater = TwitterUpdater(self)
-        # self.updater.start()
         self.updater = Updater(self.queue, self.conf)
         self.twitter_communicator = TwitterCommunicator(self.queue, self.form, self.lock, self.conf)
         self.twitter_communicator.start()
         self.updater.start()
 
-        self.api = twitter.Api(self.conf['credential']['user'],
-                               self.conf['credential']['password'])
-        #        self.state = ViewState(stdscr, self.form, self.api, self.event, self.conf)
         self.state = ViewState(stdscr, self.form, self.queue, self.conf)
-
 
         self.form.draw()
         curses.doupdate()

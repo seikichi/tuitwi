@@ -4,7 +4,6 @@
 import os
 import curses
 import curses.ascii
-import twitter
 
 class State(object):
     '''Stateパターン用の基底クラス'''
