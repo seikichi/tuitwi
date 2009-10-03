@@ -9,7 +9,7 @@ import sys
 import unicodedata
 
 # 幅2として扱う文字の集合
-# すごい行儀がわるい。。。。
+# 行儀が悪いのでどうにかする(TODO:seikichi)
 WIDE_CHARS = ['WF']
 
 def get_wide_chars():

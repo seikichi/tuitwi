@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import curses
-import twitter
+import tweepy
+import tweepy.parsers
 import threading
 import string
 import re
+import locale
+import const
 
 # 更新処理のスレッドと、一定の間隔でそれに更新を命じるスレッド
 # queueへ入れる命令形式は
@@ -61,8 +64,18 @@ class TwitterCommunicator(threading.Thread):
         self._since_id = 0
         self._rpl_since_id = 0
         self._dm_since_id = 0
-        self._api = twitter.Api(conf['credential']['user'],
-                                conf['credential']['password'])
+        tkn = tweepy.oauth.OAuthToken(self._conf['access_token']['key'],
+                                      self._conf['access_token']['secret'])
+        oauth_auth = tweepy.OAuthHandler(const.CONSUMER_KEY, const.CONSUMER_SECRET)
+        oauth_auth.access_token = tkn
+        self._api = tweepy.API(oauth_auth)
+
+        # tweepyの中でdatetime.strptimeが呼ばれているため、
+        # そこの部分の関数を無理矢理変える
+        # そうしないとロケールの問題で落ちる;;
+        tweepy.parsers._parse_datetime = lambda s: s
+        tweepy.parsers._parse_search_datetime = lambda s: s
+
         self._funcs = {}
         self._funcs['GetFriendsTimeline'] = self._GetFriendsTimeline
         self._funcs['GetDirectMessages'] = self._GetDirectMessages
@@ -73,6 +86,7 @@ class TwitterCommunicator(threading.Thread):
         self._funcs['DestroyFavorite'] = self._DestroyFavorite
         self._funcs['Quit'] = self._Quit
         threading.Thread.__init__(self)
+
 
     def run(self):
         while not self._stopevent.isSet():
@@ -116,9 +130,9 @@ class TwitterCommunicator(threading.Thread):
         '''TLを取得する'''
         try:
             if self._since_id:
-                timeline = self._api.GetFriendsTimeline(since_id = self._since_id)
+                timeline = self._api.friends_timeline(since_id = self._since_id)
             else:
-                timeline = self._api.GetFriendsTimeline(count=200)
+                timeline = self._api.friends_timeline(count=200)
             msg = u'TLの取得に成功しました'
         except Exception, e:
             msg = u'TLの取得に失敗しました'
@@ -141,9 +155,9 @@ class TwitterCommunicator(threading.Thread):
         '''Replyを取得する'''
         try:
             if self._rpl_since_id:
-                timeline = self._api.GetReplies(since_id=self._rpl_since_id)
+                timeline = self._api.mentions(since_id=self._rpl_since_id)
             else:
-                timeline = self._api.GetReplies()
+                timeline = self._api.mentions()
             msg = u'Replyの取得に成功しました'
         except Exception, e:
             msg = u'Replyの取得に失敗しました'
@@ -167,9 +181,9 @@ class TwitterCommunicator(threading.Thread):
         '''DMを取得する'''
         try:
             if self._dm_since_id:
-                timeline = self._api.GetDirectMessages(since_id=self._dm_since_id)
+                timeline = self._api.direct_messages(since_id=self._dm_since_id)
             else:
-                timeline = self._api.GetDirectMessages()
+                timeline = self._api.direct_messages()
             msg = u'DMの取得に成功しました'
         except Exception, e:
             msg = u'DMの取得に失敗しました'
@@ -194,7 +208,7 @@ class TwitterCommunicator(threading.Thread):
         text = args[0]
         reply_id = args[1]
         try:
-            status = self._api.PostUpdate(text, reply_id)
+            status = self._api.update_status(text.encode('utf-8'), reply_id)
             msg = u'Postに成功しました'
         except Exception, e:
             status = None
@@ -217,7 +231,7 @@ class TwitterCommunicator(threading.Thread):
     def _CreateFavorite(self, args):
         status = args[0]
         try:
-            st = self._api.CreateFavorite(status)
+            st = self._api.create_favorite(status.id)
             msg = u'favに成功しました'
         except Exception, e:
             st = None
@@ -237,7 +251,7 @@ class TwitterCommunicator(threading.Thread):
     def _DestroyFavorite(self, args):
         status = args[0]
         try:
-            st = self._api.DestroyFavorite(status)
+            st = self._api.destroy_favorite(status)
             msg = u'fav削除に成功しました'
         except Exception, e:
             st = None
@@ -258,7 +272,7 @@ class TwitterCommunicator(threading.Thread):
         '''削除する'''
         deleted = False
         try:
-            self._api.DestroyStatus(args[0])
+            self._api.destroy_status(args[0])
             msg = u'削除に成功しました'
             deleted = True
         except Exception, e:

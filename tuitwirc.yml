@@ -2,10 +2,10 @@
 # 注:1 保存する場合文字コードはUTF-8で
 # 注:2 インデントが大きな意味を持ちます。気をつけて下さい
 
-# アカウント名とパスワードを記入
-credential:
-  user: 'hogefuga'
-  password: 'password'
+# AOuthの認証用
+access_token:
+  key: ''
+  secret: ''
 
 # オプション
 options:

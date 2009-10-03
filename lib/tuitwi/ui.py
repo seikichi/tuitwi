@@ -7,7 +7,6 @@ import curses.ascii
 import unicodedata
 import datetime
 import locale
-import twitter
 import re
 from widechartools import set_wide_chars ,get_wide_chars, adjust_n_width, split_from_width
 
@@ -28,9 +27,9 @@ class Form(object):
         self._controls['fullstatus_area'] = FullStatusArea(stdscr, self.fullstatus_height, width, height-self.fullstatus_height-2, 0)
         self._controls['status_line'] = LabelControl(stdscr, 1, 2*(width/3), height-2, 0, attr=curses.A_REVERSE)
         self._controls['search_word_line'] = LabelControl(stdscr, 1, width-2*(width/3), height-2, 2*(width/3), attr=curses.A_REVERSE)
-        self._controls['edit_line'] = EditLineControl(stdscr, height-1, attr=curses.A_NORMAL, max_text_length = twitter.CHARACTER_LIMIT)
+        self._controls['edit_line'] = EditLineControl(stdscr, height-1, attr=curses.A_NORMAL, max_text_length = 140)
         self._controls['help_area'] = LabelControl(stdscr, height-2, width, 0, 0)
-        self._controls['search_line'] = EditLineControl(stdscr, height-1, attr=curses.A_NORMAL, max_text_length = twitter.CHARACTER_LIMIT)
+        self._controls['search_line'] = EditLineControl(stdscr, height-1, attr=curses.A_NORMAL)
 
 
         self._controls['help_area'].text =  u'''\
@@ -151,7 +150,6 @@ class FullStatusArea(Control):
         Control.__init__(self, stdscr, nlines, ncols, begin_y, begin_x)
         self._status = None
         self._keyword = u''
-        self._source_re = re.compile('>(.*)<\/a>$')
 
     def resize(self, stdscr, nlines, ncols, begin_y, begin_x):
         self._create_win(stdscr, nlines, ncols, begin_y, begin_x)
@@ -172,16 +170,12 @@ class FullStatusArea(Control):
     def _draw(self):
         if self._status is None: return
         name = (u'%s(%s)' % (self._status.user.name, self._status.user.screen_name))
-        source = u''
-        if len(self._source_re.findall(self._status.source)):
-            source = self._source_re.findall(self._status.source)[0]
-        loc = locale.getlocale(locale.LC_ALL)
+        source = self._status.source
         locale.setlocale(locale.LC_ALL, 'C')
         d = datetime.datetime.strptime(self._status.created_at, u"%a %b %d %H:%M:%S +0000 %Y")
-
         d += datetime.timedelta(hours=9)
         time = d.strftime('%Y %b %d %a %H:%M:%S')
-        locale.setlocale(locale.LC_ALL, loc)
+        locale.setlocale(locale.LC_ALL, "")
         info = (u'%s from %s' % (time, source))
         self._win.addstr(0, 0, adjust_n_width(name, self.width-1, fill=u''))
 
