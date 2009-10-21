@@ -251,7 +251,7 @@ class TwitterCommunicator(threading.Thread):
     def _DestroyFavorite(self, args):
         status = args[0]
         try:
-            st = self._api.destroy_favorite(status)
+            st = self._api.destroy_favorite(status.id)
             msg = u'fav削除に成功しました'
         except Exception, e:
             st = None
