@@ -70,12 +70,6 @@ class TwitterCommunicator(threading.Thread):
         oauth_auth.access_token = tkn
         self._api = tweepy.API(oauth_auth)
 
-        # tweepyの中でdatetime.strptimeが呼ばれているため、
-        # そこの部分の関数を無理矢理変える
-        # そうしないとロケールの問題で落ちる;;
-        tweepy.parsers._parse_datetime = lambda s: s
-        tweepy.parsers._parse_search_datetime = lambda s: s
-
         self._funcs = {}
         self._funcs['GetFriendsTimeline'] = self._GetFriendsTimeline
         self._funcs['GetDirectMessages'] = self._GetDirectMessages

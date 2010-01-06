@@ -171,12 +171,7 @@ class FullStatusArea(Control):
         if self._status is None: return
         name = (u'%s(%s)' % (self._status.user.name, self._status.user.screen_name))
         source = self._status.source
-        locale.setlocale(locale.LC_ALL, 'C')
-        d = datetime.datetime.strptime(self._status.created_at, u"%a %b %d %H:%M:%S +0000 %Y")
-        d += datetime.timedelta(hours=9)
-        time = d.strftime('%Y %b %d %a %H:%M:%S')
-        locale.setlocale(locale.LC_ALL, "")
-        info = (u'%s from %s' % (time, source))
+        info = (u'%s from %s' % (self._status.created_at+datetime.timedelta(hours=9), source))
         self._win.addstr(0, 0, adjust_n_width(name, self.width-1, fill=u''))
 
         h, i = 1, 0

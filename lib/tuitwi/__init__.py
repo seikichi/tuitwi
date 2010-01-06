@@ -61,7 +61,7 @@ class TuiTwi(object):
         self.queue = Queue.Queue()
 
     def run(self):
-        locale.setlocale(locale.LC_ALL, "")
+        locale.setlocale(locale.LC_CTYPE, "")
         try:
             curses.wrapper(self.loop)
         except Exception, message:
