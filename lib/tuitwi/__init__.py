@@ -41,7 +41,7 @@ def init_config(default_config):
     data = yaml.load(open(default_config).read().decode('utf-8'))
     data['access_token']['key'] = key
     data['access_token']['secret'] = secret
-    data['credential'] = dict(user=tweepy.API(oauth_auth).me().screen_name)
+    data['credential'] = dict(user=oauth_auth.get_username())
 
     # $HOMEに書き込み
     rcfile = op.join(os.path.expanduser('~'), '.tuitwirc.yml')
