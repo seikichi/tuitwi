@@ -6,9 +6,7 @@ version = '0.3'
 setup(name='tuitwi',
       version=version,
       description="TUI twitter client",
-      long_description="""\
-      TUI twiter client(using curses).
-""",
+      long_description="""""",
       classifiers=[
           'Development Status :: 4 - Beta',
           'Environment :: Console :: Curses',
@@ -21,7 +19,7 @@ setup(name='tuitwi',
       keywords='curses tui twitter',
       author='seikichi',
       author_email='seikichi@kmc.gr.jp',
-      url='http://d.hatena.ne.jp/se-kichi',
+      url='http://github.com/seikichi/tuitwi',
       license='MIT',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
@@ -29,7 +27,8 @@ setup(name='tuitwi',
       install_requires=[
           # -*- Extra requirements: -*-
           'tweepy',
-          'pyyaml'
+          'pyyaml',
+          'simplejson'
       ],
       entry_points="""
       # -*- Entry points: -*-
