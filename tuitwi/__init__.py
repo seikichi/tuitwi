@@ -4,6 +4,9 @@
 from ui import *
 from state import *
 from updater import *
+from os import path as op
+import sys
+from optparse import OptionParser
 import curses
 import curses.ascii
 import os
@@ -14,13 +17,32 @@ import unicodedata
 import threading
 import Queue
 import tweepy
-from os import path as op
 
+__author__ = 'seikichi@kmc.gr.jp'
+__version__ = '0.1'
 
-def start(config):
-    tuitwi = TuiTwi(config)
-    tuitwi.run()
-    return
+def main():
+    sys.path.insert(0,
+                    op.join(op.dirname(op.realpath(__file__)),
+                            'lib'))
+
+    parser = OptionParser(version="version %s" % __version__)
+    parser.add_option('-c', '--config', dest='config',
+                      help="configure file (default: ~/.tuitwirc.yml)")
+    parser.add_option('-i', '--initialize',
+                      action="store_true", dest='init', default=False,
+                      help="Initialize config file and OAuth.")
+    (options, args) = parser.parse_args()
+
+    if not options.config:
+        options.config = op.expanduser('~/.tuitwirc.yml')
+
+    if not op.exists(options.config) or options.init:
+        default = op.expanduser('tuitwirc.yml')
+        init_config(default)
+
+    TuiTwi(config=options.config).run()
+
 
 def init_config(default_config):
     '''OAuthの認証を行い、access_tokenを取得。設定ファイルに保存する'''
