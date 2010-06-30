@@ -20,6 +20,8 @@ setup(name='tuitwi',
       zip_safe=True,
       install_requires=[
           # -*- Extra requirements: -*-
+          'tweepy',
+          'pyyaml'
       ],
       entry_points="""
       # -*- Entry points: -*-
