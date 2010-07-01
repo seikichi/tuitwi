@@ -4,6 +4,7 @@
 from ui import *
 from state import *
 from updater import *
+from const import DEFAULT_CONFIG
 from os import path as op
 import sys
 from optparse import OptionParser
@@ -38,13 +39,12 @@ def main():
         options.config = op.expanduser('~/.tuitwirc.yml')
 
     if not op.exists(options.config) or options.init:
-        default = op.expanduser('tuitwirc.yml')
-        init_config(default)
+        init_config()
 
     TuiTwi(config=options.config).run()
 
 
-def init_config(default_config):
+def init_config():
     '''OAuthの認証を行い、access_tokenを取得。設定ファイルに保存する'''
 
     oauth_auth = tweepy.OAuthHandler(const.CONSUMER_KEY, const.CONSUMER_SECRET)
@@ -60,7 +60,7 @@ def init_config(default_config):
     secret = access_token.secret
 
     # デフォルトのYAMLのロード、access_tokenの設定
-    data = yaml.load(open(default_config).read().decode('utf-8'))
+    data = DEFAULT_CONFIG
     data['access_token']['key'] = key
     data['access_token']['secret'] = secret
     data['credential'] = dict(user=oauth_auth.get_username())
