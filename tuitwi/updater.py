@@ -78,6 +78,7 @@ class TwitterCommunicator(threading.Thread):
         self._funcs['DestroyStatus'] = self._DestroyStatus
         self._funcs['CreateFavorite'] = self._CreateFavorite
         self._funcs['DestroyFavorite'] = self._DestroyFavorite
+        self._funcs['OfficialRT'] = self._OfficialRT
         self._funcs['Quit'] = self._Quit
         threading.Thread.__init__(self)
 
@@ -139,6 +140,21 @@ class TwitterCommunicator(threading.Thread):
             if timeline:
                 self._form.controls['view_tab'].update_timeline(timeline)
                 self._since_id = timeline[0].id
+            self._form.controls['status_line'].text = msg
+            self._form.draw()
+            curses.doupdate()
+        finally:
+            self._lock.release()
+
+    def _OfficialRT(self, args):
+        try:
+            self._api.retweet(id=args[0])
+            msg = u'公式RTに成功しました'
+        except Exception, e:
+            msg = u'公式RTに失敗しました'
+
+        self._lock.acquire()
+        try:
             self._form.controls['status_line'].text = msg
             self._form.draw()
             curses.doupdate()

@@ -180,6 +180,7 @@ class ViewState(State):
         self._func[ord('o')] = self._open
         self._func[ord('H')] = self._home
         self._func[ord('R')] = self._rt
+        self._func[curses.ascii.DC2] = self._official_rt
         self._func[ord('/')] = self._search_input
         self._func[ord('d')] = self._delete
         self._func[curses.ascii.SO] = self._search_next
@@ -277,6 +278,12 @@ class ViewState(State):
             self.reply_id = win.current_status().id
         self._form.controls['edit_line'].insert_string(win.reply_string())
         return EditState(self._stdscr, self._form, self)
+
+    def _official_rt(self):
+        status = self._form.controls['view_tab'].current_win.current_status()
+        if status is not None:
+            self._queue.put(('OfficialRT', status.id))
+        return self
 
     def _rt(self):
         status = self._form.controls['view_tab'].current_win.current_status()
